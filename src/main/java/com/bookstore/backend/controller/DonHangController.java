@@ -65,6 +65,19 @@ public class DonHangController {
         }
     }
 
+    // API Checkout thực tế
+    @PostMapping("/checkout")
+    public ResponseEntity<String> checkout(@RequestBody com.bookstore.backend.dto.CheckoutRequest request) {
+        try {
+            String result = donHangService.checkout(request);
+            return ResponseEntity.ok(result);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi hệ thống khi thanh toán!");
+        }
+    }
+
     // API cập nhật đơn hàng
     @PutMapping("/{id}")
     public ResponseEntity<String> updateOrder(@PathVariable Integer id,
@@ -104,8 +117,11 @@ public class DonHangController {
             String result = donHangService.deleteOrder(id);
             return ResponseEntity.ok(result);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Không tìm thấy đơn hàng có id: " + id);
+            if (e.getMessage() != null && e.getMessage().contains("Không tìm thấy")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi khi xóa đơn hàng: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Xóa đơn hàng thất bại");

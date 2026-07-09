@@ -81,8 +81,11 @@ public class NhaXuatBanController {
             String result = nhaXuatBanService.deletePublisher(id);
             return ResponseEntity.ok(result);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Không tìm thấy nhà xuất bản có id: " + id);
+            if (e.getMessage() != null && e.getMessage().contains("Không tìm thấy")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Không thể xóa nhà xuất bản này vì vẫn còn sách của họ trong hệ thống.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Xóa nhà xuất bản thất bại");

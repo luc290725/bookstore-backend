@@ -84,8 +84,11 @@ public class TheLoaiController {
             String result = theLoaiService.deleteCategory(id);
             return ResponseEntity.ok(result);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Không tìm thấy thể loại có id: " + id);
+            if (e.getMessage() != null && e.getMessage().contains("Không tìm thấy")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Không thể xóa thể loại này vì vẫn còn sách thuộc thể loại trong hệ thống.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Xóa thể loại thất bại");

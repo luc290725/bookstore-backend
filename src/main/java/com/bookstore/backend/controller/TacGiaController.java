@@ -81,8 +81,11 @@ public class TacGiaController {
             String result = tacGiaService.deleteAuthor(id);
             return ResponseEntity.ok(result);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Không tìm thấy tác giả có id: " + id);
+            if (e.getMessage() != null && e.getMessage().contains("Không tìm thấy")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Không thể xóa tác giả này vì vẫn còn sách của tác giả trong hệ thống.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Xóa tác giả thất bại");

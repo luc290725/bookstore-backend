@@ -56,4 +56,10 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Integer> {
     @Transactional
     @Query(value = "DELETE FROM hoadon WHERE id = :id", nativeQuery = true)
     int deleteInvoice(@Param("id") Integer id);
+
+    // xóa hóa đơn theo id đơn hàng
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM hoadon WHERE iddonhang = :idDonHang", nativeQuery = true)
+    int deleteInvoiceByOrderId(@Param("idDonHang") Integer idDonHang);
 }

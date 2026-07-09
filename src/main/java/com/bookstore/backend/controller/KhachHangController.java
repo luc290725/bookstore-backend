@@ -93,8 +93,11 @@ public class KhachHangController {
             String result = khachHangService.deleteCustomer(id);
             return ResponseEntity.ok(result);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Không tìm thấy khách hàng có id: " + id);
+            if (e.getMessage() != null && e.getMessage().contains("Không tìm thấy")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Không thể xóa khách hàng này vì khách hàng đã có đơn hàng trong hệ thống.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Xóa khách hàng thất bại");

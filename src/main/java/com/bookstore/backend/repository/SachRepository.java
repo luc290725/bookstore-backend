@@ -79,4 +79,10 @@ public interface SachRepository extends JpaRepository<Sach, Integer> {
     @Transactional
     @Query(value = "DELETE FROM sach WHERE id = :id", nativeQuery = true)
     int deleteBook(@Param("id") Integer id);
+
+    // cập nhật số lượng tồn kho
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE sach SET soluongton = :soLuongTon WHERE id = :id", nativeQuery = true)
+    int updateStock(@Param("id") Integer id, @Param("soLuongTon") Integer soLuongTon);
 }
